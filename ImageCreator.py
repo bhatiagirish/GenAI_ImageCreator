@@ -19,8 +19,6 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.info("Loading function")
 
-# create a client for amazon bedrock client
-client = boto3.client(service_name="bedrock", region_name="us-east-1")
 # create a bedrock runtime client
 client_runtime = boto3.client(service_name="bedrock-runtime", region_name="us-east-1")
 
@@ -42,14 +40,13 @@ def lambda_handler(event, context):
     prompt = ""
     if event is None:
         logger.info("Event is None")
-    logger.info(f"event is --> {event}")
+        return buildResponse(400, "Event is not set")
 
     # extract txt file from the event based on post method
     if event.get("httpMethod") == "POST":
         logger.info("httpMethod is POST")
         prompt = event.get("body")
         contentType = event.get("headers").get("content-type")
-        logger.info(f"contentType is --> {contentType}")
     else:
         logger.info("httpMethod is not POST")
         return buildResponse(400, "Only POST method is supported")
